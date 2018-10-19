@@ -11,6 +11,8 @@ public class Player : MonoBehaviour {
 	float accelerationTimeAirborne = .2f;
 	float accelerationTimeGrounded = .1f;
 	float moveSpeed = 6;
+
+	bool doubleJump = false;
 	
 	float gravity;
 	float jumpVelocity;
@@ -31,9 +33,26 @@ public class Player : MonoBehaviour {
 	
 	void Update()
 	{
-		if(Input.GetKeyDown(KeyCode.Space) && controller.collisions.below)
+		// if(Input.GetKeyDown(KeyCode.Space) && controller.collisions.below)
+		// {
+		// 	velocity.y = jumpVelocity;
+		// }
+
+		if(Input.GetKeyDown(KeyCode.Space))
 		{
-			velocity.y = jumpVelocity;
+			if(controller.collisions.below)
+			{
+				velocity.y = jumpVelocity;
+				doubleJump = true;
+			}
+			else
+			{
+				if(doubleJump && !controller.collisions.below)
+				{
+					velocity.y = jumpVelocity;
+					doubleJump = false;
+				}
+			}
 		}
 
 		CalculateVelocity();
@@ -41,9 +60,19 @@ public class Player : MonoBehaviour {
 		controller.Move(velocity * Time.deltaTime, directionalInput);
 
 		//fix for accumulation of gravitational force
-		if(controller.collisions.above || controller.collisions.below)
+		// if(controller.collisions.above || controller.collisions.below)
+		// {
+		// 	velocity.y = 0;
+		// }
+		//split into 2 if statements to add double jump for when running off the ground
+		if(controller.collisions.above)
 		{
 			velocity.y = 0;
+		}
+		if(controller.collisions.below)
+		{
+			velocity.y = 0;
+			doubleJump = true;
 		}
 	}
 	public void SetDirectionalInput (Vector2 input)
