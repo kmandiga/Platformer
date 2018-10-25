@@ -33,11 +33,6 @@ public class Player : MonoBehaviour {
 	
 	void Update()
 	{
-		// if(Input.GetKeyDown(KeyCode.Space) && controller.collisions.below)
-		// {
-		// 	velocity.y = jumpVelocity;
-		// }
-
 		if(Input.GetKeyDown(KeyCode.Space))
 		{
 			if(controller.collisions.below)
@@ -59,11 +54,6 @@ public class Player : MonoBehaviour {
 
 		controller.Move(velocity * Time.deltaTime, directionalInput);
 
-		//fix for accumulation of gravitational force
-		// if(controller.collisions.above || controller.collisions.below)
-		// {
-		// 	velocity.y = 0;
-		// }
 		//split into 2 if statements to add double jump for when running off the ground
 		if(controller.collisions.above)
 		{
@@ -81,9 +71,6 @@ public class Player : MonoBehaviour {
 	}
 	void CalculateVelocity()
 	{
-		//float targetVelocityX = directionalInput.x * moveSpeed;
-		//smooths turning in x direction. It is set to be different for when in the air or grounded. May or may not actually want to implement this
-		//velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below)?accelerationTimeGrounded:accelerationTimeAirborne);
 		velocity.x = directionalInput.x * moveSpeed;
 		velocity.y += gravity * Time.deltaTime;
 		if(Mathf.Sign(directionalInput.x) < 0)

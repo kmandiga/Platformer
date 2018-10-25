@@ -106,11 +106,6 @@ public class PlatformController : RaycastController {
 			}
 			if(passenger.moveBeforePlatform == beforeMovePlatform)
 			{
-				//not optimal solution to weird player object collision from below (sticking to platform) because extra calculations have been done. Make sure in level design that player will not get squished by platform
-				// if(!passengerDictionary[passenger.transform].collisions.above)
-				// {
-				// passengerDictionary[passenger.transform].Move(passenger.velocity, passenger.standingOnPlatform);
-				// }
 				passengerDictionary[passenger.transform].Move(passenger.velocity, passenger.standingOnPlatform);
 			}
 		}
