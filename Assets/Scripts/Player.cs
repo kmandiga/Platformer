@@ -12,7 +12,7 @@ public class Player : MonoBehaviour {
 	float accelerationTimeGrounded = .1f;
 	float moveSpeed = 6;
 
-	bool doubleJump = false;
+	bool doubleJump = false;	
 	
 	float gravity;
 	float jumpVelocity;
@@ -81,9 +81,19 @@ public class Player : MonoBehaviour {
 	}
 	void CalculateVelocity()
 	{
-		float targetVelocityX = directionalInput.x * moveSpeed;
+		//float targetVelocityX = directionalInput.x * moveSpeed;
 		//smooths turning in x direction. It is set to be different for when in the air or grounded. May or may not actually want to implement this
-		velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below)?accelerationTimeGrounded:accelerationTimeAirborne);
+		//velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below)?accelerationTimeGrounded:accelerationTimeAirborne);
+		velocity.x = directionalInput.x * moveSpeed;
 		velocity.y += gravity * Time.deltaTime;
+		if(Mathf.Sign(directionalInput.x) < 0)
+		{
+			controller.SpriteFacingRight = false;
+			velocity.x = -velocity.x;
+		}
+		if(Mathf.Sign(directionalInput.x) > 0 && directionalInput.x != 0)
+		{
+			controller.SpriteFacingRight = true;
+		}
 	}
 }

@@ -137,6 +137,8 @@ public class PlatformController : RaycastController {
 				Vector2 rayOrigin = (directionY == -1)?raycastOrigins.bottomLeft:raycastOrigins.topLeft;
 				rayOrigin += Vector2.right * (verticalRaySpacing * i);
 				RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, passengerMask);
+
+				Debug.DrawRay(rayOrigin, Vector2.up * directionY, Color.red);
 				
 				if(hit && hit.distance != 0)
 				{
@@ -163,6 +165,8 @@ public class PlatformController : RaycastController {
 				Vector2 rayOrigin = (directionX == -1)?raycastOrigins.bottomLeft:raycastOrigins.bottomRight;
 				rayOrigin += Vector2.up * (horizontalRaySpacing * i);
 				RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, passengerMask);
+
+				Debug.DrawRay(rayOrigin, Vector2.right * directionY, Color.red);
 
 				if(hit && hit.distance != 0)
 				{
@@ -195,6 +199,10 @@ public class PlatformController : RaycastController {
 					{
 						movedPassengers.Add(hit.transform);
 						float pushX = velocity.x;
+						if(!passengerDictionary[hit.transform].SpriteFacingRight)
+						{
+							pushX = -pushX;
+						}
 						float pushY = velocity.y;
 						passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(pushX,pushY), true, false));
 					}
@@ -218,19 +226,19 @@ public class PlatformController : RaycastController {
 		}
 	}
 	//function to draw crosses everywhere the platform will move
-	// void OnDrawGizmos()
-	// {
-	// 	if (localWaypoints != null)
-	// 	{
-	// 		Gizmos.color = Color.red;
-	// 		float size = .3f;
+	void OnDrawGizmos()
+	{
+		if (localWaypoints != null)
+		{
+			Gizmos.color = Color.red;
+			float size = .3f;
 
-	// 		for(int i = 0; i < localWaypoints.Length; i++)
-	// 		{
-	// 			Vector3 globalWaypointPos = (Application.isPlaying)?globalWaypoints[i] : localWaypoints[i] + transform.position;
-	// 			Gizmos.DrawLine(globalWaypointPos - Vector3.up * size, globalWaypointPos + Vector3.up * size);
-	// 			Gizmos.DrawLine(globalWaypointPos - Vector3.left * size, globalWaypointPos + Vector3.left * size);
-	// 		}
-	// 	}
-	// }
+			for(int i = 0; i < localWaypoints.Length; i++)
+			{
+				Vector3 globalWaypointPos = (Application.isPlaying)?globalWaypoints[i] : localWaypoints[i] + transform.position;
+				Gizmos.DrawLine(globalWaypointPos - Vector3.up * size, globalWaypointPos + Vector3.up * size);
+				Gizmos.DrawLine(globalWaypointPos - Vector3.left * size, globalWaypointPos + Vector3.left * size);
+			}
+		}
+	}
 }
