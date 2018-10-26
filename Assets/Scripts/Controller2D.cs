@@ -16,23 +16,25 @@ public class Controller2D : RaycastController {
 	Transform transform;
 
 	public bool SpriteFacingRight = true;
+	bool inKnockback = false;
 
 	public override void Start()
 	{
 		base.Start();
 		transform = GetComponent<Transform>();
 	}
-	public void Move(Vector2 moveAmount, bool standingOnPlatform)
+	public void Move(Vector2 moveAmount, bool standingOnPlatform, bool hit)
 	{
-		Move(moveAmount, Vector2.zero, standingOnPlatform);
+		Move(moveAmount, Vector2.zero, standingOnPlatform, inKnockback);
 	}
-	public void Move(Vector2 moveAmount, Vector2 input, bool standingOnPlatform = false)
+	public void Move(Vector2 moveAmount, Vector2 input, bool standingOnPlatform, bool hit)
 	{
 		//ref keyword: instead of a copy of the moveAmount variable being created to pass to vertical collisions, it will now reference the original variable
 		UpdateRaycastOrigins();
 		collisions.Reset();
 		collisions.moveAmountOld = moveAmount;
 		playerInput = input;
+		inKnockback = hit;
 		
 		Flip(SpriteFacingRight, ref moveAmount);
 
@@ -84,6 +86,7 @@ public class Controller2D : RaycastController {
 					moveAmount.x = (hit.distance - skinWidth) * -directionX;
 				}
 			}
+			
 		}
 	}
 

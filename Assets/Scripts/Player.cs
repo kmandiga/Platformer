@@ -2,6 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Things to do:
+//disable player input while in knockback [x]
+//update calculate velocity (add a force to send player back: based on percentage) [half done]
+//reset isHit bool [done]
+//need to cast rays in both horizontal directions while in knockback (optional, necesary if there will be walls)
+//rework physics engine for smooth hit arcs
+//***************************
+//add boundaries to the stage to destroy player
 
 [RequireComponent (typeof (Controller2D))]
 public class Player : MonoBehaviour {
@@ -12,7 +20,11 @@ public class Player : MonoBehaviour {
 	float accelerationTimeGrounded = .1f;
 	float moveSpeed = 6;
 
-	bool doubleJump = false;	
+	bool doubleJump = false;
+
+	bool inKnockback = false;
+	Collider2D lastAttack;
+	float knockbackDirection = 0;
 	
 	float gravity;
 	float jumpVelocity;
@@ -52,7 +64,7 @@ public class Player : MonoBehaviour {
 
 		CalculateVelocity();
 
-		controller.Move(velocity * Time.deltaTime, directionalInput);
+		controller.Move(velocity * Time.deltaTime, directionalInput, false, inKnockback);
 
 		//split into 2 if statements to add double jump for when running off the ground
 		if(controller.collisions.above)
@@ -69,18 +81,50 @@ public class Player : MonoBehaviour {
 	{
 		directionalInput = input;
 	}
+
+	//
 	void CalculateVelocity()
 	{
-		velocity.x = directionalInput.x * moveSpeed;
-		velocity.y += gravity * Time.deltaTime;
-		if(Mathf.Sign(directionalInput.x) < 0)
+		if(!inKnockback)
 		{
-			controller.SpriteFacingRight = false;
-			velocity.x = -velocity.x;
+			velocity.x = directionalInput.x * moveSpeed;
+			velocity.y += gravity * Time.deltaTime;
+			if(Mathf.Sign(directionalInput.x) < 0)
+			{
+				controller.SpriteFacingRight = false;
+				velocity.x = -velocity.x;
+			}
+			if(Mathf.Sign(directionalInput.x) > 0 && directionalInput.x != 0)
+			{
+				controller.SpriteFacingRight = true;
+			}
 		}
-		if(Mathf.Sign(directionalInput.x) > 0 && directionalInput.x != 0)
+		if(inKnockback)
 		{
-			controller.SpriteFacingRight = true;
+			velocity.x = knockbackDirection * moveSpeed * 5;
+			velocity.y = Vector2.up.y * moveSpeed * 5;
+			velocity.y += gravity * Time.deltaTime;
+			if(!controller.SpriteFacingRight)
+			{
+				velocity.x = -velocity.x;
+			}
 		}
+	}
+	public void gotHit(bool isHit, Collider2D attack)
+	{
+		inKnockback = isHit;
+		lastAttack = attack;
+		if(inKnockback)
+		{
+			//replace .5f with a knockback formula
+			Invoke("resetInKnockbackBool", .2f);
+			Vector2 difference = transform.position - attack.transform.position;
+			knockbackDirection = Mathf.Sign(difference.x);
+		}
+	}
+	
+	void resetInKnockbackBool()
+	{
+		inKnockback = false;
 	}
 }
