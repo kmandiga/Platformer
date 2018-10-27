@@ -16,23 +16,19 @@ public class Player : MonoBehaviour {
 
 	public float jumpHeight = 4;
 	public float timeToJumpApex = .4f;
-
 	float groundSpeed = 10;
 	float airSpeed = 3;
-
 	bool doubleJump = false;
-
-	bool inKnockback = false;
-	Collider2D lastAttack;
-	float knockbackDirection = 0;
-	
+	bool inKnockback = false;	
 	float gravity;
 	float jumpVelocity;
-	Vector3 velocity;
-
+	Vector2 velocity;
+	Vector2 velocityOld;
+	Vector2 knockbackForce;
 	Controller2D controller;
-
 	Vector2 directionalInput;
+	public float playerPercentage = 0;
+	public float playerWeight = 2;
 	
 	void Start () 
 	{
@@ -40,6 +36,10 @@ public class Player : MonoBehaviour {
 
 		gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+
+		knockbackForce = Vector2.zero;
+		velocity = Vector2.zero;
+		velocityOld = Vector2.zero;
 	}
 	
 	void Update()
@@ -55,6 +55,7 @@ public class Player : MonoBehaviour {
 			{
 				if(doubleJump && !controller.collisions.below)
 				{
+					velocity.x = 0;
 					velocity.y = jumpVelocity;
 					doubleJump = false;
 				}
@@ -81,7 +82,6 @@ public class Player : MonoBehaviour {
 		directionalInput = input;
 	}
 
-	//
 	void CalculateVelocity()
 	{
 		if(!inKnockback)
@@ -93,8 +93,10 @@ public class Player : MonoBehaviour {
 			else
 			{
 				velocity.x = directionalInput.x * airSpeed;
+				
 			}
 			velocity.y += gravity * Time.deltaTime;
+			//always wants to be done post velocity calculations
 			if(Mathf.Sign(directionalInput.x) < 0)
 			{
 				controller.SpriteFacingRight = false;
@@ -107,26 +109,37 @@ public class Player : MonoBehaviour {
 		}
 		if(inKnockback)
 		{
-			velocity.x = knockbackDirection * airSpeed * 5;
-			velocity.y = Vector2.up.y * airSpeed * 5;
-			velocity.y += gravity * Time.deltaTime;
+			velocity.x = knockbackForce.x * airSpeed * 5;
+			velocity.y = knockbackForce.y * airSpeed * 5;
+			//velocity.y += gravity * Time.deltaTime;
 			if(!controller.SpriteFacingRight)
 			{
 				velocity.x = -velocity.x;
 			}
 		}
+		velocityOld = velocity;
 	}
-	public void gotHit(bool isHit, Collider2D attack)
+	// public void gotHit(bool isHit, Collider2D attack)
+	// {
+	// 	inKnockback = isHit;
+	// 	lastAttack = attack;
+	// 	if(inKnockback)
+	// 	{
+	// 		//replace .5f with a knockback formula
+	// 		Invoke("resetInKnockbackBool", .1f);
+	// 		Vector2 difference = transform.position - attack.transform.position;
+	// 		knockbackDirection = Mathf.Sign(difference.x);
+	// 	}
+	// }
+	public void gotHit(Vector2 knockback, float hitstun)
 	{
-		inKnockback = isHit;
-		lastAttack = attack;
+		inKnockback = true;
+		knockbackForce = knockback;
 		if(inKnockback)
 		{
-			//replace .5f with a knockback formula
-			Invoke("resetInKnockbackBool", .2f);
-			Vector2 difference = transform.position - attack.transform.position;
-			knockbackDirection = Mathf.Sign(difference.x);
+			Invoke("resetInKnockbackBool", hitstun);
 		}
+
 	}
 	
 	void resetInKnockbackBool()
