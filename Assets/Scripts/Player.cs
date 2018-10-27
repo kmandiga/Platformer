@@ -5,7 +5,6 @@ using UnityEngine;
 //Things to do:
 //disable player input while in knockback [x]
 //update calculate velocity (add a force to send player back: based on percentage) [half done]
-//reset isHit bool [done]
 //need to cast rays in both horizontal directions while in knockback (optional, necesary if there will be walls)
 //rework physics engine for smooth hit arcs
 //***************************
@@ -119,18 +118,6 @@ public class Player : MonoBehaviour {
 		}
 		velocityOld = velocity;
 	}
-	// public void gotHit(bool isHit, Collider2D attack)
-	// {
-	// 	inKnockback = isHit;
-	// 	lastAttack = attack;
-	// 	if(inKnockback)
-	// 	{
-	// 		//replace .5f with a knockback formula
-	// 		Invoke("resetInKnockbackBool", .1f);
-	// 		Vector2 difference = transform.position - attack.transform.position;
-	// 		knockbackDirection = Mathf.Sign(difference.x);
-	// 	}
-	// }
 	public void gotHit(Vector2 knockback, float hitstun)
 	{
 		inKnockback = true;

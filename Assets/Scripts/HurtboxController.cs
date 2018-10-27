@@ -19,13 +19,6 @@ public class HurtboxController : MonoBehaviour {
 		player = GetComponentInParent<Player>();
 		thisCollider = GetComponent<Collider2D>();
 	}
-
-	// void OnTriggerEnter2D(Collider2D other)
-	// {
-	// 	hit = true;
-	// 	hitbox = other.GetComponent<Collider2D>();
-	// 	player.gotHit(hit, hitbox);
-	// }
 	void OnTriggerEnter2D(Collider2D other)
 	{
 		hit = true;
