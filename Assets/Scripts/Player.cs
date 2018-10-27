@@ -43,7 +43,7 @@ public class Player : MonoBehaviour {
 	
 	void Update()
 	{
-		if(Input.GetKeyDown(KeyCode.Space))
+		if(Input.GetButtonDown("Jump"))
 		{
 			if(controller.collisions.below)
 			{
