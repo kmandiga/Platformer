@@ -16,9 +16,9 @@ public class Player : MonoBehaviour {
 
 	public float jumpHeight = 4;
 	public float timeToJumpApex = .4f;
-	float accelerationTimeAirborne = .2f;
-	float accelerationTimeGrounded = .1f;
-	float moveSpeed = 6;
+
+	float groundSpeed = 10;
+	float airSpeed = 3;
 
 	bool doubleJump = false;
 
@@ -29,7 +29,6 @@ public class Player : MonoBehaviour {
 	float gravity;
 	float jumpVelocity;
 	Vector3 velocity;
-	float velocityXSmoothing;
 
 	Controller2D controller;
 
@@ -87,7 +86,14 @@ public class Player : MonoBehaviour {
 	{
 		if(!inKnockback)
 		{
-			velocity.x = directionalInput.x * moveSpeed;
+			if(controller.collisions.below)
+			{
+				velocity.x = directionalInput.x * groundSpeed;
+			}
+			else
+			{
+				velocity.x = directionalInput.x * airSpeed;
+			}
 			velocity.y += gravity * Time.deltaTime;
 			if(Mathf.Sign(directionalInput.x) < 0)
 			{
@@ -101,8 +107,8 @@ public class Player : MonoBehaviour {
 		}
 		if(inKnockback)
 		{
-			velocity.x = knockbackDirection * moveSpeed * 5;
-			velocity.y = Vector2.up.y * moveSpeed * 5;
+			velocity.x = knockbackDirection * airSpeed * 5;
+			velocity.y = Vector2.up.y * airSpeed * 5;
 			velocity.y += gravity * Time.deltaTime;
 			if(!controller.SpriteFacingRight)
 			{

@@ -20,10 +20,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4920340511061014}
   - component: {fileID: 212782424474231794}
-  - component: {fileID: 114328372137353420}
   - component: {fileID: 61658895904598764}
   - component: {fileID: 114317678439697386}
   - component: {fileID: 114993353797041304}
+  - component: {fileID: 114656072371462054}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -89,8 +89,8 @@ MonoBehaviour:
   verticalRaySpacing: 0
   collider: {fileID: 0}
   playerInput: {x: 0, y: 0}
-  spriteFacingRight: 1
---- !u!114 &114328372137353420
+  SpriteFacingRight: 1
+--- !u!114 &114656072371462054
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,11 +98,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1881717106779084}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 955c46f865cfd1a448570dff9a641447, type: 3}
+  m_Script: {fileID: 11500000, guid: a82279a664cb0bf449bb755070313af9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpHeight: 4
-  timeToJumpApex: 0.5
+  characterWeight: 5
+  characterSpeedGrounded: 5
+  characterSpeedAerial: 3
+  gravity: 1
+  jumpVelocity: 50
 --- !u!114 &114993353797041304
 MonoBehaviour:
   m_ObjectHideFlags: 1
