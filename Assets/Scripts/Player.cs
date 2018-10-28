@@ -36,7 +36,7 @@ public class Player : MonoBehaviour {
 		velocity = Vector2.zero;
 		velocityOld = Vector2.zero;
 
-		percentageOnScreen.text = "Player Percentage = "+ playerPercentage.ToString();
+		percentageOnScreen.text = "0%";
 	}
 	void Update()
 	{
@@ -136,6 +136,6 @@ public class Player : MonoBehaviour {
 	}
 	void UpdatePercentOnScreen()
 	{
-		percentageOnScreen.text = "Player Percentage = "+ playerPercentage;
+		percentageOnScreen.text = playerPercentage +"%";
 	}
 }
