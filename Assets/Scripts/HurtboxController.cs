@@ -21,10 +21,20 @@ public class HurtboxController : MonoBehaviour {
 	}
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		hit = true;
-		hitboxInfo = other.GetComponent<HitboxInformation>();
-		knockback = hitboxInfo.CalculateKnockback(player.playerPercentage, player.playerWeight, thisCollider);
-		hitstun = hitboxInfo.calculateHitstun(player.playerPercentage);
-		player.gotHit(knockback, hitstun);
+		if(other.gameObject.layer == 10)
+		{
+			hit = true;
+			hitboxInfo = other.GetComponent<HitboxInformation>();
+			knockback = hitboxInfo.CalculateKnockback(player.playerPercentage, player.playerWeight, thisCollider);
+			hitstun = hitboxInfo.calculateHitstun(player.playerPercentage);
+			player.gotHit(knockback, hitstun);
+		}
+	}
+	void OnTriggerExit2D(Collider2D other)
+	{
+		if(other.gameObject.layer == 12)
+		{
+			Destroy(transform.parent.gameObject);
+		}
 	}
 }

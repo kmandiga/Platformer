@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Things to do:
-//disable player input while in knockback [x]
-//update calculate velocity (add a force to send player back: based on percentage) [half done]
-//need to cast rays in both horizontal directions while in knockback (optional, necesary if there will be walls)
-//rework physics engine for smooth hit arcs
-//***************************
-//add boundaries to the stage to destroy player
+//drift in the air (after getting hit could be improved)
+//make player percentage a factor
+//make border to remove player
 
 [RequireComponent (typeof (Controller2D))]
 public class Player : MonoBehaviour {
@@ -18,7 +14,7 @@ public class Player : MonoBehaviour {
 	float groundSpeed = 10;
 	float airSpeed = 6;
 	bool doubleJump = false;
-	bool inKnockback = false;	
+	bool inKnockback = false;
 	float gravity;
 	float jumpVelocity;
 	Vector2 velocity;
@@ -28,6 +24,8 @@ public class Player : MonoBehaviour {
 	Vector2 directionalInput;
 	public float playerPercentage = 0;
 	public float playerWeight = 2;
+
+	float velocityXSmoothing;
 	
 	void Start () 
 	{
@@ -55,6 +53,7 @@ public class Player : MonoBehaviour {
 				if(doubleJump && !controller.collisions.below)
 				{
 					velocity.x = 0;
+					velocityOld.x = 0;
 					velocity.y = jumpVelocity;
 					doubleJump = false;
 				}
@@ -97,14 +96,7 @@ public class Player : MonoBehaviour {
 				}
 				else
 				{
-					if(Mathf.Sign(directionalInput.x) == Mathf.Sign(velocityOld.x) && directionalInput.x != 0)
-					{
-						velocity.x = directionalInput.x * airSpeed - velocityOld.x;
-					}
-					else
-					{
-						velocity.x = directionalInput.x * airSpeed + velocityOld.x;
-					}
+					velocity.x = directionalInput.x * airSpeed;
 				}
 			}
 			velocity.y += gravity * Time.deltaTime;
