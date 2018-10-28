@@ -5,7 +5,7 @@ using UnityEngine;
 public class HitboxInformation : MonoBehaviour {
 
 	Vector2 knockback;
-	float damage = 1f;
+	float damage = 3f;
 	//baseAngle must be in quadrant 1 or 4 (-pi/2 to pi/2)
 	float baseAngle = 45;
 	float angleTransform;

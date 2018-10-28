@@ -16,7 +16,7 @@ public class Player : MonoBehaviour {
 	public float jumpHeight = 4;
 	public float timeToJumpApex = .4f;
 	float groundSpeed = 10;
-	float airSpeed = 3;
+	float airSpeed = 6;
 	bool doubleJump = false;
 	bool inKnockback = false;	
 	float gravity;
@@ -91,8 +91,21 @@ public class Player : MonoBehaviour {
 			}
 			else
 			{
-				velocity.x = directionalInput.x * airSpeed;
-				
+				if(directionalInput.x == 0)
+				{
+					velocity.x = velocityOld.x;
+				}
+				else
+				{
+					if(Mathf.Sign(directionalInput.x) == Mathf.Sign(velocityOld.x) && directionalInput.x != 0)
+					{
+						velocity.x = directionalInput.x * airSpeed - velocityOld.x;
+					}
+					else
+					{
+						velocity.x = directionalInput.x * airSpeed + velocityOld.x;
+					}
+				}
 			}
 			velocity.y += gravity * Time.deltaTime;
 			//always wants to be done post velocity calculations
@@ -108,8 +121,8 @@ public class Player : MonoBehaviour {
 		}
 		if(inKnockback)
 		{
-			velocity.x = knockbackForce.x * airSpeed * 5;
-			velocity.y = knockbackForce.y * airSpeed * 5;
+			velocity.x = knockbackForce.x * airSpeed;
+			velocity.y = knockbackForce.y * airSpeed;
 			//velocity.y += gravity * Time.deltaTime;
 			if(!controller.SpriteFacingRight)
 			{
