@@ -12,8 +12,6 @@ public class HitboxInformation : MonoBehaviour {
 	float baseHitstun = .2f;
 	float knockbackMagnitude;
 	float knockbackDirection;
-
-
 	void Start()
 	{
 		knockbackMagnitude = 0;
@@ -47,5 +45,9 @@ public class HitboxInformation : MonoBehaviour {
 	public float calculateHitstun(float pPercentage)
 	{
 		return baseHitstun + (pPercentage/50);
+	}
+	public float getDamage()
+	{
+		return damage;
 	}
 }

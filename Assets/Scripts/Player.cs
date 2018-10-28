@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //drift in the air (after getting hit could be improved)
-//make player percentage a factor
+
 
 [RequireComponent (typeof (Controller2D))]
 public class Player : MonoBehaviour {
@@ -23,7 +24,7 @@ public class Player : MonoBehaviour {
 	Vector2 directionalInput;
 	public float playerPercentage = 0;
 	public float playerWeight = 2;
-	
+	public Text percentageOnScreen;
 	void Start () 
 	{
 		controller = GetComponent<Controller2D>();
@@ -34,8 +35,9 @@ public class Player : MonoBehaviour {
 		knockbackForce = Vector2.zero;
 		velocity = Vector2.zero;
 		velocityOld = Vector2.zero;
+
+		percentageOnScreen.text = "Player Percentage = "+ playerPercentage.ToString();
 	}
-	
 	void Update()
 	{
 		if(Input.GetButtonDown("Jump"))
@@ -56,11 +58,8 @@ public class Player : MonoBehaviour {
 				}
 			}
 		}
-
 		CalculateVelocity();
-
 		controller.Move(velocity * Time.deltaTime, directionalInput, false, inKnockback);
-
 		//split into 2 if statements to add double jump for when running off the ground
 		if(controller.collisions.above)
 		{
@@ -76,7 +75,6 @@ public class Player : MonoBehaviour {
 	{
 		directionalInput = input;
 	}
-
 	void CalculateVelocity()
 	{
 		if(!inKnockback)
@@ -120,19 +118,24 @@ public class Player : MonoBehaviour {
 		}
 		velocityOld = velocity;
 	}
-	public void gotHit(Vector2 knockback, float hitstun)
+	public void gotHit(Vector2 knockback, float hitstun, float damage)
 	{
 		inKnockback = true;
 		knockbackForce = knockback;
+		playerPercentage += damage;
+		UpdatePercentOnScreen();
 		if(inKnockback)
 		{
 			Invoke("resetInKnockbackBool", hitstun);
 		}
 
 	}
-	
 	void resetInKnockbackBool()
 	{
 		inKnockback = false;
+	}
+	void UpdatePercentOnScreen()
+	{
+		percentageOnScreen.text = "Player Percentage = "+ playerPercentage;
 	}
 }
