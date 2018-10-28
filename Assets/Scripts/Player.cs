@@ -4,7 +4,6 @@ using UnityEngine;
 
 //drift in the air (after getting hit could be improved)
 //make player percentage a factor
-//make border to remove player
 
 [RequireComponent (typeof (Controller2D))]
 public class Player : MonoBehaviour {
@@ -24,8 +23,6 @@ public class Player : MonoBehaviour {
 	Vector2 directionalInput;
 	public float playerPercentage = 0;
 	public float playerWeight = 2;
-
-	float velocityXSmoothing;
 	
 	void Start () 
 	{

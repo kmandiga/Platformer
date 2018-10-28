@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//how to get the direction the hit came from
-
 public class HurtboxController : MonoBehaviour {
 
 	Player player;
