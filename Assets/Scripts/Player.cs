@@ -3,7 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-//drift in the air (after getting hit could be improved)
+//maybe hitstun should end when velocity.y = 0 (either hit the ground or at top of knockback arc)
+
+//movement was underestimated in complexity
+//new approach: come up with an fsm for possible states
+//				look at forces acting on char at each state
+
+//idea to decouple animation and movement
+//			Instead of flipping whole gameobject, calculate transforms
+//			of child hitboxes and hurtboxes and updata them based on direction
 
 
 [RequireComponent (typeof (Controller2D))]
@@ -11,14 +19,15 @@ public class Player : MonoBehaviour {
 
 	public float jumpHeight = 4;
 	public float timeToJumpApex = .4f;
-	float groundSpeed = 10;
-	float airSpeed = 6;
+	float baseSpeed = 1f;
+	float baseAcceleration = .2f;
 	bool doubleJump = false;
 	bool inKnockback = false;
+	bool startGravity = false;
 	float gravity;
 	float jumpVelocity;
 	Vector2 velocity;
-	Vector2 velocityOld;
+	Vector2 prevGlobalVelocity;
 	Vector2 knockbackForce;
 	Controller2D controller;
 	Vector2 directionalInput;
@@ -34,11 +43,49 @@ public class Player : MonoBehaviour {
 
 		knockbackForce = Vector2.zero;
 		velocity = Vector2.zero;
-		velocityOld = Vector2.zero;
+		prevGlobalVelocity = directionalInput;
 
-		percentageOnScreen.text = "0%";
+		percentageOnScreen.text = "";
 	}
 	void Update()
+	{
+		CalculateVelocity();
+		controller.Move(velocity * Time.deltaTime, directionalInput, false, inKnockback);
+		UpdateCollisionBools();
+
+		UpdateDebugInformation();
+	}
+	public void SetDirectionalInput (Vector2 input)
+	{
+		directionalInput = input;
+	}
+	void CalculateVelocity()
+	{
+		//calculate x velocity
+		if(directionalInput.x != 0)
+		{
+			if(velocity.x < 1f && velocity.x > -1f)
+			{
+				velocity.x = directionalInput.x * baseSpeed;
+			}
+			else
+			{		
+				velocity.x += directionalInput.x * baseAcceleration;
+			}
+		}
+		//calculate y velocity
+		Jump();//test pre and post velocity.x calculations
+		velocity.y += gravity * Time.deltaTime;
+	}
+	void UpdateCollisionBools()
+	{
+		if(controller.collisions.below)
+		{
+			velocity.y = 0;
+			doubleJump = true;
+		}
+	}
+	void Jump()
 	{
 		if(Input.GetButtonDown("Jump"))
 		{
@@ -49,81 +96,23 @@ public class Player : MonoBehaviour {
 			}
 			else
 			{
-				if(doubleJump && !controller.collisions.below)
+				if(doubleJump)
 				{
+					//double jump cancels x momentum
 					velocity.x = 0;
-					velocityOld.x = 0;
 					velocity.y = jumpVelocity;
 					doubleJump = false;
 				}
 			}
 		}
-		CalculateVelocity();
-		controller.Move(velocity * Time.deltaTime, directionalInput, false, inKnockback);
-		//split into 2 if statements to add double jump for when running off the ground
-		if(controller.collisions.above)
-		{
-			velocity.y = 0;
-		}
-		if(controller.collisions.below)
-		{
-			velocity.y = 0;
-			doubleJump = true;
-		}
-	}
-	public void SetDirectionalInput (Vector2 input)
-	{
-		directionalInput = input;
-	}
-	void CalculateVelocity()
-	{
-		if(!inKnockback)
-		{
-			if(controller.collisions.below)
-			{
-				velocity.x = directionalInput.x * groundSpeed;
-			}
-			else
-			{
-				if(directionalInput.x == 0)
-				{
-					velocity.x = velocityOld.x;
-				}
-				else
-				{
-					velocity.x = directionalInput.x * airSpeed;
-				}
-			}
-			velocity.y += gravity * Time.deltaTime;
-			//always wants to be done post velocity calculations
-			if(Mathf.Sign(directionalInput.x) < 0)
-			{
-				controller.SpriteFacingRight = false;
-				velocity.x = -velocity.x;
-			}
-			if(Mathf.Sign(directionalInput.x) > 0 && directionalInput.x != 0)
-			{
-				controller.SpriteFacingRight = true;
-			}
-		}
-		if(inKnockback)
-		{
-			velocity.x = knockbackForce.x * airSpeed;
-			velocity.y = knockbackForce.y * airSpeed;
-			//velocity.y += gravity * Time.deltaTime;
-			if(!controller.SpriteFacingRight)
-			{
-				velocity.x = -velocity.x;
-			}
-		}
-		velocityOld = velocity;
 	}
 	public void gotHit(Vector2 knockback, float hitstun, float damage)
 	{
 		inKnockback = true;
+		startGravity = false;
 		knockbackForce = knockback;
 		playerPercentage += damage;
-		UpdatePercentOnScreen();
+		UpdateDebugInformation();
 		if(inKnockback)
 		{
 			Invoke("resetInKnockbackBool", hitstun);
@@ -134,8 +123,10 @@ public class Player : MonoBehaviour {
 	{
 		inKnockback = false;
 	}
-	void UpdatePercentOnScreen()
+	void UpdateDebugInformation()
 	{
-		percentageOnScreen.text = playerPercentage +"%";
+		percentageOnScreen.text = "Player % = "+ playerPercentage 
+								 +"\nvelocity (x) = "+ velocity.x
+								 +"\nglobal velocity (x) = "+ prevGlobalVelocity.x;
 	}
 }

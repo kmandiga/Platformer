@@ -5,11 +5,12 @@ using UnityEngine;
 public class HitboxInformation : MonoBehaviour {
 
 	Vector2 knockback;
-	float damage = 3f;
+	float damage = 12f;
 	//baseAngle must be in quadrant 1 or 4 (-pi/2 to pi/2)
 	float baseAngle = 45;
 	float angleTransform;
 	float baseHitstun = .2f;
+	float baseKnockback = .5f;
 	float knockbackMagnitude;
 	float knockbackDirection;
 	void Start()
@@ -20,7 +21,7 @@ public class HitboxInformation : MonoBehaviour {
 	}
 	public Vector2 CalculateKnockback(float pPercentage, float pWeight, Collider2D hurtBox)
 	{
-		knockbackMagnitude = pPercentage + pWeight*damage;
+		knockbackMagnitude = (pPercentage/100)*pWeight*(damage/10) + .5f;
 		Vector2 difference = hurtBox.transform.position - transform.position;
 		//direction of knockback (left or right)
 		knockbackDirection = Mathf.Sign(difference.x);
@@ -44,7 +45,7 @@ public class HitboxInformation : MonoBehaviour {
 	}
 	public float calculateHitstun(float pPercentage)
 	{
-		return baseHitstun + (pPercentage/50);
+		return baseHitstun;
 	}
 	public float getDamage()
 	{
