@@ -21,7 +21,8 @@ public class HitboxInformation : MonoBehaviour {
 	}
 	public Vector2 CalculateKnockback(float pPercentage, float pWeight, Collider2D hurtBox)
 	{
-		knockbackMagnitude = (pPercentage/100)*pWeight*(damage/10) + .5f;
+		// knockbackMagnitude = (pPercentage/100)*pWeight*(damage/10) + baseKnockback;
+		knockbackMagnitude = 20;
 		Vector2 difference = hurtBox.transform.position - transform.position;
 		//direction of knockback (left or right)
 		knockbackDirection = Mathf.Sign(difference.x);

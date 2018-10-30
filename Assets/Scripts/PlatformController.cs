@@ -194,10 +194,6 @@ public class PlatformController : RaycastController {
 					{
 						movedPassengers.Add(hit.transform);
 						float pushX = velocity.x;
-						if(!passengerDictionary[hit.transform].SpriteFacingRight)
-						{
-							pushX = -pushX;
-						}
 						float pushY = velocity.y;
 						passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(pushX,pushY), true, false));
 					}

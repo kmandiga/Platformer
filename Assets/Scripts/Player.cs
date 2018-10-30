@@ -4,14 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 //maybe hitstun should end when velocity.y = 0 (either hit the ground or at top of knockback arc)
-
-//movement was underestimated in complexity
-//new approach: come up with an fsm for possible states
-//				look at forces acting on char at each state
+//knockback is kinda balloony
 
 //idea to decouple animation and movement
 //			Instead of flipping whole gameobject, calculate transforms
-//			of child hitboxes and hurtboxes and updata them based on direction
+//			of child hitboxes and hurtboxes and update them based on direction
 
 
 [RequireComponent (typeof (Controller2D))]
@@ -19,15 +16,16 @@ public class Player : MonoBehaviour {
 
 	public float jumpHeight = 4;
 	public float timeToJumpApex = .4f;
-	float baseSpeed = 1f;
+	float maxSpeedGrounded = 8f;
+	float maxSpeedAerial = 3f;
 	float baseAcceleration = .2f;
 	bool doubleJump = false;
 	bool inKnockback = false;
-	bool startGravity = false;
+	bool stopMoving = false;
+	int frames;
 	float gravity;
 	float jumpVelocity;
 	Vector2 velocity;
-	Vector2 prevGlobalVelocity;
 	Vector2 knockbackForce;
 	Controller2D controller;
 	Vector2 directionalInput;
@@ -41,9 +39,10 @@ public class Player : MonoBehaviour {
 		gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
 
+		frames = 0;
+
 		knockbackForce = Vector2.zero;
 		velocity = Vector2.zero;
-		prevGlobalVelocity = directionalInput;
 
 		percentageOnScreen.text = "";
 	}
@@ -61,21 +60,37 @@ public class Player : MonoBehaviour {
 	}
 	void CalculateVelocity()
 	{
-		//calculate x velocity
-		if(directionalInput.x != 0)
+		if(!inKnockback)
 		{
-			if(velocity.x < 1f && velocity.x > -1f)
-			{
-				velocity.x = directionalInput.x * baseSpeed;
+			//calculate x velocity
+			if(directionalInput.x != 0)
+			{	
+				velocity.x += directionalInput.x * baseAcceleration;
+				stopMoving = false;
 			}
 			else
-			{		
-				velocity.x += directionalInput.x * baseAcceleration;
+			{
+				if(controller.collisions.below)
+				{
+				StopMovement();
+				}
 			}
+			if(controller.collisions.below)
+			{
+				velocity.x = Mathf.Clamp(velocity.x, -maxSpeedGrounded, maxSpeedGrounded);
+			}
+			else
+			{
+				velocity.x = Mathf.Clamp(velocity.x, -maxSpeedAerial, maxSpeedAerial);
+			}
+			//calculate y velocity
+			Jump();//test pre and post velocity.x calculations
+			velocity.y += gravity * Time.deltaTime;
 		}
-		//calculate y velocity
-		Jump();//test pre and post velocity.x calculations
-		velocity.y += gravity * Time.deltaTime;
+		else
+		{
+			velocity.y += gravity * Time.deltaTime;
+		}
 	}
 	void UpdateCollisionBools()
 	{
@@ -89,6 +104,7 @@ public class Player : MonoBehaviour {
 	{
 		if(Input.GetButtonDown("Jump"))
 		{
+
 			if(controller.collisions.below)
 			{
 				velocity.y = jumpVelocity;
@@ -99,7 +115,7 @@ public class Player : MonoBehaviour {
 				if(doubleJump)
 				{
 					//double jump cancels x momentum
-					velocity.x = 0;
+					velocity.x = directionalInput.x * baseAcceleration;
 					velocity.y = jumpVelocity;
 					doubleJump = false;
 				}
@@ -109,8 +125,7 @@ public class Player : MonoBehaviour {
 	public void gotHit(Vector2 knockback, float hitstun, float damage)
 	{
 		inKnockback = true;
-		startGravity = false;
-		knockbackForce = knockback;
+		velocity = knockback;
 		playerPercentage += damage;
 		UpdateDebugInformation();
 		if(inKnockback)
@@ -119,6 +134,23 @@ public class Player : MonoBehaviour {
 		}
 
 	}
+	void StopMovement()
+	{
+		if(!stopMoving)
+		{
+			frames++;
+			//number of frames should depend on player weight eventually
+			if(frames == 20)
+			{
+				stopMoving = true;
+				frames = 0;
+			}
+		}
+		else
+		{
+			velocity.x = 0;
+		}
+	}
 	void resetInKnockbackBool()
 	{
 		inKnockback = false;
@@ -126,7 +158,6 @@ public class Player : MonoBehaviour {
 	void UpdateDebugInformation()
 	{
 		percentageOnScreen.text = "Player % = "+ playerPercentage 
-								 +"\nvelocity (x) = "+ velocity.x
-								 +"\nglobal velocity (x) = "+ prevGlobalVelocity.x;
+								 +"\nvelocity (x) = "+ velocity.x;
 	}
 }

@@ -4,18 +4,12 @@ using UnityEngine;
 
 
 public class Controller2D : RaycastController {
-
-	float maxClimbAngle = 80;
-	float maxDescendAngle = 80;
-
 	public CollisionInfo collisions;
 
 	[HideInInspector]
 	public Vector2 playerInput;
 
 	Transform transform;
-
-	public bool SpriteFacingRight = true;
 	bool inKnockback = false;
 
 	public override void Start()
@@ -35,8 +29,6 @@ public class Controller2D : RaycastController {
 		collisions.moveAmountOld = moveAmount;
 		playerInput = input;
 		inKnockback = hit;
-		
-		Flip(SpriteFacingRight, ref moveAmount);
 
 		if(moveAmount.x != 0)
 		{
@@ -58,7 +50,7 @@ public class Controller2D : RaycastController {
 	//ref keyword: see in move function. Any change to the moveAmount variable will change it in memory
 	void HorizontalCollisions(ref Vector2 moveAmount)
 	{
-		float directionX = Mathf.Sign((SpriteFacingRight)?1:-1);
+		float directionX = Mathf.Sign(moveAmount.x);
 		float rayLength = Mathf.Abs(moveAmount.x) + skinWidth;
 
 		for(int i = 0; i < horizontalRayCount; i++)
@@ -77,14 +69,7 @@ public class Controller2D : RaycastController {
 				{
 					continue;
 				}
-				if(SpriteFacingRight)
-				{
-					moveAmount.x = (hit.distance - skinWidth) * directionX;
-				}
-				if(!SpriteFacingRight)
-				{
-					moveAmount.x = (hit.distance - skinWidth) * -directionX;
-				}
+				moveAmount.x = (hit.distance - skinWidth) * directionX;
 			}
 			
 		}
@@ -134,18 +119,6 @@ public class Controller2D : RaycastController {
 			}
 		}
 	}
-	void Flip(bool right, ref Vector2 moveAmount)
-	{
-		if(right)
-		{
-			transform.localRotation = Quaternion.Euler(0,0,0);
-		}
-		else if(!right)
-		{
-			transform.localRotation = Quaternion.Euler(0,180,0);
-		}
-	}
-
 	void ResetFallingThroughPlatform()
 	{
 		collisions.fallingThroughPlatform = false;
