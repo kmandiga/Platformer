@@ -126,6 +126,7 @@ public class Player : MonoBehaviour {
 	{
 		inKnockback = true;
 		velocity = knockback;
+		knockbackForce = knockback;
 		playerPercentage += damage;
 		UpdateDebugInformation();
 		if(inKnockback)

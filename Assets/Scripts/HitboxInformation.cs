@@ -31,16 +31,21 @@ public class HitboxInformation : MonoBehaviour {
 			if(baseAngle > 0)
 			{
 				//puts angle in 2nd quadrant
-				angleTransform = Mathf.PI - angleTransform;
+				knockback.x = -Mathf.Cos(angleTransform)*knockbackMagnitude;
+				knockback.y = Mathf.Sin(angleTransform)*knockbackMagnitude;
 			}
 			else if(baseAngle < 0)
 			{
 				//puts angle in 3rd quadrant
-				angleTransform = 3*Mathf.PI - angleTransform;
+				knockback.x = -Mathf.Cos(angleTransform)*knockbackMagnitude;
+				knockback.y = -Mathf.Sin(angleTransform)*knockbackMagnitude;
 			}
 		}
-		knockback.x = Mathf.Cos(angleTransform)*knockbackMagnitude;
-		knockback.y = Mathf.Sin(angleTransform)*knockbackMagnitude;
+		else
+		{
+			knockback.x = Mathf.Cos(angleTransform)*knockbackMagnitude;
+			knockback.y = Mathf.Sin(angleTransform)*knockbackMagnitude;
+		}
 
 		return knockback;
 	}
