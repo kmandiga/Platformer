@@ -19,7 +19,7 @@ public class HurtboxController : MonoBehaviour {
 	}
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		if(other.gameObject.layer == 10)
+		if(other.gameObject.layer == 10 && other.transform.parent != transform.parent)
 		{
 			hit = true;
 			hitboxInfo = other.GetComponent<HitboxInformation>();

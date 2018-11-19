@@ -6,10 +6,6 @@ using UnityEngine.UI;
 //maybe hitstun should end when velocity.y = 0 (either hit the ground or at top of knockback arc)
 //knockback is kinda balloony
 
-//idea to decouple animation and movement
-//			Instead of flipping whole gameobject, calculate transforms
-//			of child hitboxes and hurtboxes and update them based on direction
-
 
 [RequireComponent (typeof (Controller2D))]
 public class Player : MonoBehaviour {
@@ -32,9 +28,11 @@ public class Player : MonoBehaviour {
 	public float playerPercentage = 0;
 	public float playerWeight = 2;
 	public Text percentageOnScreen;
+	Animator animator;
 	void Start () 
 	{
 		controller = GetComponent<Controller2D>();
+		animator = GetComponent<Animator>();
 
 		gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
@@ -50,9 +48,56 @@ public class Player : MonoBehaviour {
 	{
 		CalculateVelocity();
 		controller.Move(velocity * Time.deltaTime, directionalInput, false, inKnockback);
+		UpdateAnimations();
 		UpdateCollisionBools();
 
 		UpdateDebugInformation();
+	}
+	void UpdateAnimations()
+	{
+		//set direction facing
+		if(directionalInput.x > 0)
+		{
+			transform.localScale = new Vector2(1,1);
+		}
+		if(directionalInput.x < 0)
+		{
+			transform.localScale = new Vector2(-1,1);
+		}
+
+		//set animation state
+		if(velocity.x != 0)
+		{
+			if(Input.GetButtonDown("Fire1"))
+			{
+				animator.SetTrigger("Striking");
+			}
+			else if(Input.GetButtonDown("Fire2"))
+			{
+				animator.SetTrigger("Flykicking");
+			}
+			else
+			{
+				animator.SetBool("isRunning",true);
+				animator.SetBool("isIdle", false);
+			}
+		}
+		else
+		{
+			if(Input.GetButtonDown("Fire1"))
+			{
+				animator.SetTrigger("Striking");
+			}
+			else if(Input.GetButtonDown("Fire2"))
+			{
+				animator.SetTrigger("Flykicking");
+			}
+			else
+			{
+				animator.SetBool("isRunning",false);
+				animator.SetBool("isIdle", true);
+			}
+		}
 	}
 	public void SetDirectionalInput (Vector2 input)
 	{
