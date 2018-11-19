@@ -21,11 +21,13 @@ public class HurtboxController : MonoBehaviour {
 	{
 		if(other.gameObject.layer == 10 && other.transform.parent != transform.parent)
 		{
-			hit = true;
-			hitboxInfo = other.GetComponent<HitboxInformation>();
-			knockback = hitboxInfo.CalculateKnockback(player.playerPercentage, player.playerWeight, thisCollider);
-			hitstun = hitboxInfo.calculateHitstun(player.playerPercentage);
-			player.gotHit(knockback, hitstun, hitboxInfo.getDamage());
+			// hit = true;
+			// hitboxInfo = other.GetComponent<HitboxInformation>();
+			// knockback = hitboxInfo.CalculateKnockback(player.playerPercentage, player.playerWeight, thisCollider);
+			// hitstun = hitboxInfo.calculateHitstun(player.playerPercentage);
+			// player.gotHit(knockback, hitstun, hitboxInfo.getDamage());
+
+			Destroy(transform.parent.gameObject);
 		}
 	}
 	void OnTriggerExit2D(Collider2D other)
