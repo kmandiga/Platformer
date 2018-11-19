@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 
 [RequireComponent (typeof (Controller2D))]
-public class Player : MonoBehaviour, IHittable {
+public class Sandbag : MonoBehaviour, IHittable {
 
 	public float jumpHeight = 4;
 	public float timeToJumpApex = .4f;
@@ -28,11 +28,9 @@ public class Player : MonoBehaviour, IHittable {
 	public float playerPercentage {get;set;}
 	public float playerWeight {get;set;}
 	public Text OnScreenDebugInfo;
-	Animator animator;
 	void Start () 
 	{
 		controller = GetComponent<Controller2D>();
-		animator = GetComponent<Animator>();
 
 		gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
@@ -50,56 +48,9 @@ public class Player : MonoBehaviour, IHittable {
 	{
 		CalculateVelocity();
 		controller.Move(velocity * Time.deltaTime, directionalInput, false, inKnockback);
-		UpdateAnimations();
 		UpdateCollisionBools();
 
 		UpdateDebugInformation();
-	}
-	void UpdateAnimations()
-	{
-		//set direction facing
-		if(directionalInput.x > 0)
-		{
-			transform.localScale = new Vector2(1,1);
-		}
-		if(directionalInput.x < 0)
-		{
-			transform.localScale = new Vector2(-1,1);
-		}
-
-		//set animation state
-		if(velocity.x != 0)
-		{
-			if(Input.GetButtonDown("Fire1"))
-			{
-				animator.SetTrigger("Striking");
-			}
-			else if(Input.GetButtonDown("Fire2"))
-			{
-				animator.SetTrigger("Flykicking");
-			}
-			else
-			{
-				animator.SetBool("isRunning",true);
-				animator.SetBool("isIdle", false);
-			}
-		}
-		else
-		{
-			if(Input.GetButtonDown("Fire1"))
-			{
-				animator.SetTrigger("Striking");
-			}
-			else if(Input.GetButtonDown("Fire2"))
-			{
-				animator.SetTrigger("Flykicking");
-			}
-			else
-			{
-				animator.SetBool("isRunning",false);
-				animator.SetBool("isIdle", true);
-			}
-		}
 	}
 	public void SetDirectionalInput (Vector2 input)
 	{
@@ -131,7 +82,7 @@ public class Player : MonoBehaviour, IHittable {
 				velocity.x = Mathf.Clamp(velocity.x, -maxSpeedAerial, maxSpeedAerial);
 			}
 			//calculate y velocity
-			Jump();//test pre and post velocity.x calculations
+			//Jump();//test pre and post velocity.x calculations
 			velocity.y += gravity * Time.deltaTime;
 		}
 		else

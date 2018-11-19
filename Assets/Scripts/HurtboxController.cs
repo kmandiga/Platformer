@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HurtboxController : MonoBehaviour {
 
-	Player player;
+	IHittable player;
 	bool hit = false;
 	Collider2D hitbox;
 	Collider2D thisCollider;
@@ -14,7 +14,7 @@ public class HurtboxController : MonoBehaviour {
 
 	void Start()
 	{
-		player = GetComponentInParent<Player>();
+		player = GetComponentInParent<IHittable>();
 		thisCollider = GetComponent<Collider2D>();
 	}
 	void OnTriggerEnter2D(Collider2D other)
@@ -25,7 +25,7 @@ public class HurtboxController : MonoBehaviour {
 			hitboxInfo = other.GetComponent<HitboxInformation>();
 			knockback = hitboxInfo.CalculateKnockback(player.playerPercentage, player.playerWeight, thisCollider);
 			hitstun = hitboxInfo.calculateHitstun(player.playerPercentage);
-			player.gotHit(knockback, hitstun, hitboxInfo.getDamage());
+			player.GotHit(knockback, hitstun, hitboxInfo.getDamage());
 		}
 	}
 	void OnTriggerExit2D(Collider2D other)
