@@ -78,6 +78,10 @@ public class Player : MonoBehaviour, IHittable {
 			{
 				animator.SetTrigger("Flykicking");
 			}
+			else if(Input.GetButtonDown("Fire3"))
+			{
+				animator.SetTrigger("Fireball");
+			}
 			else
 			{
 				animator.SetBool("isRunning",true);
@@ -93,6 +97,10 @@ public class Player : MonoBehaviour, IHittable {
 			else if(Input.GetButtonDown("Fire2"))
 			{
 				animator.SetTrigger("Flykicking");
+			}
+			else if(Input.GetButtonDown("Fire3"))
+			{
+				animator.SetTrigger("Fireball");
 			}
 			else
 			{
