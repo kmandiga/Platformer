@@ -5,7 +5,6 @@ using UnityEngine;
 public class HurtboxController : MonoBehaviour {
 
 	IHittable player;
-	bool hit = false;
 	Collider2D hitbox;
 	Collider2D thisCollider;
 	HitboxInformation hitboxInfo;
@@ -21,10 +20,9 @@ public class HurtboxController : MonoBehaviour {
 	{
 		if(other.gameObject.layer == 10 && other.transform.parent != transform.parent)
 		{
-			hit = true;
 			hitboxInfo = other.GetComponent<HitboxInformation>();
-			knockback = hitboxInfo.CalculateKnockback(player.playerPercentage, player.playerWeight, thisCollider);
-			hitstun = hitboxInfo.calculateHitstun(player.playerPercentage);
+			knockback = hitboxInfo.CalculateKnockback(player.percentage, player.weight, thisCollider);
+			hitstun = hitboxInfo.calculateHitstun(player.percentage);
 			player.GotHit(knockback, hitstun, hitboxInfo.getDamage());
 		}
 	}

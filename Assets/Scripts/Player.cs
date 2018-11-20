@@ -25,8 +25,8 @@ public class Player : MonoBehaviour, IHittable {
 	Vector2 knockbackForce;
 	Controller2D controller;
 	Vector2 directionalInput;
-	public float playerPercentage {get;set;}
-	public float playerWeight {get;set;}
+	public float percentage {get;set;}
+	public float weight {get;set;}
 	public Text OnScreenDebugInfo;
 	Animator animator;
 	void Start () 
@@ -43,8 +43,8 @@ public class Player : MonoBehaviour, IHittable {
 		velocity = Vector2.zero;
 
 		OnScreenDebugInfo.text = "";
-		playerPercentage = 0;
-		playerWeight = 2;
+		percentage = 0;
+		weight = 2;
 	}
 	void Update()
 	{
@@ -105,7 +105,7 @@ public class Player : MonoBehaviour, IHittable {
 	{
 		directionalInput = input;
 	}
-	void CalculateVelocity()
+	public void CalculateVelocity()
 	{
 		if(!inKnockback)
 		{
@@ -174,7 +174,7 @@ public class Player : MonoBehaviour, IHittable {
 		inKnockback = true;
 		velocity = knockback;
 		knockbackForce = knockback;
-		playerPercentage += damage;
+		percentage += damage;
 		UpdateDebugInformation();
 		if(inKnockback)
 		{
@@ -205,7 +205,7 @@ public class Player : MonoBehaviour, IHittable {
 	}
 	void UpdateDebugInformation()
 	{
-		OnScreenDebugInfo.text = "Player % = "+ playerPercentage 
+		OnScreenDebugInfo.text = "Player % = "+ percentage 
 								 +"\nvelocity (x) = "+ velocity.x;
 	}
 }

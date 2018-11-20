@@ -3,7 +3,8 @@ using System.Collections;
 
 public interface IHittable
 {
-    float playerPercentage {get;set;}
-    float playerWeight {get;set;}
+    float percentage {get;set;}
+    float weight {get;set;}
     void GotHit(Vector2 knockback, float hitstun, float damage);
+    void CalculateVelocity();
 }

@@ -15,25 +15,22 @@ public class Sandbag : MonoBehaviour, IHittable {
 	float maxSpeedGrounded = 8f;
 	float maxSpeedAerial = 3f;
 	float baseAcceleration = .2f;
-	bool doubleJump = false;
 	bool inKnockback = false;
 	bool stopMoving = false;
 	int frames;
 	float gravity;
-	float jumpVelocity;
 	Vector2 velocity;
 	Vector2 knockbackForce;
 	Controller2D controller;
 	Vector2 directionalInput;
-	public float playerPercentage {get;set;}
-	public float playerWeight {get;set;}
+	public float percentage {get;set;}
+	public float weight {get;set;}
 	public Text OnScreenDebugInfo;
 	void Start () 
 	{
 		controller = GetComponent<Controller2D>();
 
 		gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
-		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
 
 		frames = 0;
 
@@ -41,8 +38,8 @@ public class Sandbag : MonoBehaviour, IHittable {
 		velocity = Vector2.zero;
 
 		OnScreenDebugInfo.text = "";
-		playerPercentage = 0;
-		playerWeight = 2;
+		percentage = 0;
+		weight = 2;
 	}
 	void Update()
 	{
@@ -56,7 +53,7 @@ public class Sandbag : MonoBehaviour, IHittable {
 	{
 		directionalInput = input;
 	}
-	void CalculateVelocity()
+	public void CalculateVelocity()
 	{
 		if(!inKnockback)
 		{
@@ -82,7 +79,6 @@ public class Sandbag : MonoBehaviour, IHittable {
 				velocity.x = Mathf.Clamp(velocity.x, -maxSpeedAerial, maxSpeedAerial);
 			}
 			//calculate y velocity
-			//Jump();//test pre and post velocity.x calculations
 			velocity.y += gravity * Time.deltaTime;
 		}
 		else
@@ -95,29 +91,6 @@ public class Sandbag : MonoBehaviour, IHittable {
 		if(controller.collisions.below)
 		{
 			velocity.y = 0;
-			doubleJump = true;
-		}
-	}
-	void Jump()
-	{
-		if(Input.GetButtonDown("Jump"))
-		{
-
-			if(controller.collisions.below)
-			{
-				velocity.y = jumpVelocity;
-				doubleJump = true;
-			}
-			else
-			{
-				if(doubleJump)
-				{
-					//double jump cancels x momentum
-					velocity.x = directionalInput.x * baseAcceleration;
-					velocity.y = jumpVelocity;
-					doubleJump = false;
-				}
-			}
 		}
 	}
 	public void GotHit(Vector2 knockback, float hitstun, float damage)
@@ -125,7 +98,7 @@ public class Sandbag : MonoBehaviour, IHittable {
 		inKnockback = true;
 		velocity = knockback;
 		knockbackForce = knockback;
-		playerPercentage += damage;
+		percentage += damage;
 		UpdateDebugInformation();
 		if(inKnockback)
 		{
@@ -156,7 +129,7 @@ public class Sandbag : MonoBehaviour, IHittable {
 	}
 	void UpdateDebugInformation()
 	{
-		OnScreenDebugInfo.text = "Player % = "+ playerPercentage 
+		OnScreenDebugInfo.text = "Sandbag % = "+ percentage 
 								 +"\nvelocity (x) = "+ velocity.x;
 	}
 }

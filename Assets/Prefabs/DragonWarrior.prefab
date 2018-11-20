@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 114656072371462054}
   - component: {fileID: 95607231177382582}
   m_Layer: 8
-  m_Name: Player
+  m_Name: DragonWarrior
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -465,8 +465,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpHeight: 4
   timeToJumpApex: 0.4
-  playerPercentage: 0
-  playerWeight: 2
   OnScreenDebugInfo: {fileID: 0}
 --- !u!114 &114993353797041304
 MonoBehaviour:

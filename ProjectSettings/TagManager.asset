@@ -14,7 +14,7 @@ TagManager:
   - UI
   - 
   - 
-  - Player
+  - HittableObject
   - Obstacle
   - Hitbox
   - Hurtbox
