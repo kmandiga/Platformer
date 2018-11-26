@@ -70,17 +70,23 @@ public class Player : MonoBehaviour, IHittable {
 		//set animation state
 		if(velocity.x != 0)
 		{
-			if(Input.GetButtonDown("Fire1"))
+			if(animator.GetBool("Attacking") == false)
 			{
-				animator.SetTrigger("Striking");
-			}
-			else if(Input.GetButtonDown("Fire2"))
-			{
-				animator.SetTrigger("Flykicking");
-			}
-			else if(Input.GetButtonDown("Fire3"))
-			{
-				animator.SetTrigger("Fireball");
+				if(Input.GetButtonDown("Fire1"))
+				{
+					animator.SetTrigger("Striking");
+					
+				}
+				else if(Input.GetButtonDown("Fire2"))
+				{
+					animator.SetTrigger("Flykicking");
+					
+				}
+				else if(Input.GetButtonDown("Fire3"))
+				{
+					animator.SetTrigger("Fireball");
+					
+				}
 			}
 			else
 			{
@@ -90,17 +96,23 @@ public class Player : MonoBehaviour, IHittable {
 		}
 		else
 		{
-			if(Input.GetButtonDown("Fire1"))
+			if(animator.GetBool("Attacking") == false)
 			{
-				animator.SetTrigger("Striking");
-			}
-			else if(Input.GetButtonDown("Fire2"))
-			{
-				animator.SetTrigger("Flykicking");
-			}
-			else if(Input.GetButtonDown("Fire3"))
-			{
-				animator.SetTrigger("Fireball");
+				if(Input.GetButtonDown("Fire1"))
+				{
+					animator.SetTrigger("Striking");
+					
+				}
+				else if(Input.GetButtonDown("Fire2"))
+				{
+					animator.SetTrigger("Flykicking");
+					
+				}
+				else if(Input.GetButtonDown("Fire3"))
+				{
+					animator.SetTrigger("Fireball");
+					
+				}
 			}
 			else
 			{
