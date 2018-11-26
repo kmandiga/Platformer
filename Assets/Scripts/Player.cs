@@ -88,11 +88,8 @@ public class Player : MonoBehaviour, IHittable {
 					
 				}
 			}
-			else
-			{
-				animator.SetBool("isRunning",true);
-				animator.SetBool("isIdle", false);
-			}
+			animator.SetBool("isRunning",true);
+			animator.SetBool("isIdle", false);
 		}
 		else
 		{
@@ -114,11 +111,8 @@ public class Player : MonoBehaviour, IHittable {
 					
 				}
 			}
-			else
-			{
-				animator.SetBool("isRunning",false);
-				animator.SetBool("isIdle", true);
-			}
+			animator.SetBool("isRunning",false);
+			animator.SetBool("isIdle", true);
 		}
 	}
 	public void SetDirectionalInput (Vector2 input)
