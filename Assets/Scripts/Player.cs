@@ -13,14 +13,13 @@ public class Player : MonoBehaviour, IHittable {
 	public float jumpHeight = 4;
 	public float timeToJumpApex = .4f;
 	float maxSpeedGrounded = 8f;
-	float maxSpeedAerial = 3f;
-	float baseAcceleration = .2f;
-	bool doubleJump = false;
+	float maxSpeedAerial = 5f;
+	
 	bool inKnockback = false;
 	bool stopMoving = false;
 	int frames;
-	float gravity;
-	float jumpVelocity;
+	public float gravity;
+	public float jumpVelocity;
 	Vector2 velocity;
 	Vector2 knockbackForce;
 	Controller2D controller;
@@ -28,11 +27,10 @@ public class Player : MonoBehaviour, IHittable {
 	public float percentage {get;set;}
 	public float weight {get;set;}
 	public Text OnScreenDebugInfo;
-	Animator animator;
+	
 	void Start () 
 	{
 		controller = GetComponent<Controller2D>();
-		animator = GetComponent<Animator>();
 
 		gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
@@ -50,70 +48,17 @@ public class Player : MonoBehaviour, IHittable {
 	{
 		CalculateVelocity();
 		controller.Move(velocity * Time.deltaTime, directionalInput, false, inKnockback);
-		UpdateAnimations();
 		UpdateCollisionBools();
-
 		UpdateDebugInformation();
 	}
-	void UpdateAnimations()
+	public void setVelocity(float vx, float vy)
 	{
-		//set direction facing
-		if(directionalInput.x > 0)
-		{
-			transform.localScale = new Vector2(1,1);
-		}
-		if(directionalInput.x < 0)
-		{
-			transform.localScale = new Vector2(-1,1);
-		}
-
-		//set animation state
-		if(velocity.x != 0)
-		{
-			if(animator.GetBool("Attacking") == false)
-			{
-				if(Input.GetButtonDown("Fire1"))
-				{
-					animator.SetTrigger("Striking");
-					
-				}
-				else if(Input.GetButtonDown("Fire2"))
-				{
-					animator.SetTrigger("Flykicking");
-					
-				}
-				else if(Input.GetButtonDown("Fire3"))
-				{
-					animator.SetTrigger("Fireball");
-					
-				}
-			}
-			animator.SetBool("isRunning",true);
-			animator.SetBool("isIdle", false);
-		}
-		else
-		{
-			if(animator.GetBool("Attacking") == false)
-			{
-				if(Input.GetButtonDown("Fire1"))
-				{
-					animator.SetTrigger("Striking");
-					
-				}
-				else if(Input.GetButtonDown("Fire2"))
-				{
-					animator.SetTrigger("Flykicking");
-					
-				}
-				else if(Input.GetButtonDown("Fire3"))
-				{
-					animator.SetTrigger("Fireball");
-					
-				}
-			}
-			animator.SetBool("isRunning",false);
-			animator.SetBool("isIdle", true);
-		}
+		velocity.x = vx;
+		velocity.y = vy;
+	}
+	public Vector2 getVelocity()
+	{
+		return velocity;
 	}
 	public void SetDirectionalInput (Vector2 input)
 	{
@@ -126,7 +71,7 @@ public class Player : MonoBehaviour, IHittable {
 			//calculate x velocity
 			if(directionalInput.x != 0)
 			{	
-				velocity.x += directionalInput.x * baseAcceleration;
+				velocity.x= directionalInput.x * maxSpeedGrounded;
 				stopMoving = false;
 			}
 			else
@@ -145,7 +90,6 @@ public class Player : MonoBehaviour, IHittable {
 				velocity.x = Mathf.Clamp(velocity.x, -maxSpeedAerial, maxSpeedAerial);
 			}
 			//calculate y velocity
-			Jump();//test pre and post velocity.x calculations
 			velocity.y += gravity * Time.deltaTime;
 		}
 		else
@@ -158,29 +102,6 @@ public class Player : MonoBehaviour, IHittable {
 		if(controller.collisions.below)
 		{
 			velocity.y = 0;
-			doubleJump = true;
-		}
-	}
-	void Jump()
-	{
-		if(Input.GetButtonDown("Jump"))
-		{
-
-			if(controller.collisions.below)
-			{
-				velocity.y = jumpVelocity;
-				doubleJump = true;
-			}
-			else
-			{
-				if(doubleJump)
-				{
-					//double jump cancels x momentum
-					velocity.x = directionalInput.x * baseAcceleration;
-					velocity.y = jumpVelocity;
-					doubleJump = false;
-				}
-			}
 		}
 	}
 	public void GotHit(Vector2 knockback, float hitstun, float damage)
