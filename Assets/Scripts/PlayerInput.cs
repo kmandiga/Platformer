@@ -10,51 +10,69 @@ public class PlayerInput : MonoBehaviour
 	Vector2 directionalInput = Vector2.zero;
 	Animator animator;
 	bool doubleJump = false;
-	float jumpVelocity;
 	Controller2D controller;
+	Touch movementTouch;
+	float deadzoneX;
+	float deadzoneY;
+	float accumulatedDeltaX;
+	float accumulatedDeltaY;
 	void Start () 
 	{
 		player = GetComponent<Player>();
 		animator = GetComponent<Animator>();
 		controller = GetComponent<Controller2D>();
+
+		deadzoneX = .05f * Screen.width;
+		deadzoneY = .1f * Screen.height;
+
+		accumulatedDeltaX = 0;
+		accumulatedDeltaY = 0;
 	}
 	void Update () 
 	{
-		// Vector2 directionalInput =  new Vector2 (Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-		// player.SetDirectionalInput(directionalInput);
-
 		if(Input.touchCount > 0)
 		{
-			Touch myTouch = Input.touches[0];
-			if(myTouch.phase == TouchPhase.Began)
+			if(Input.touches[0].position.x < Screen.width / 2)
 			{
-				touchOrigin = myTouch.position;
-			}
-			else if(myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0)
-			{
-				Vector2 touchEnd = myTouch.position;
-
-				float x = touchEnd.x - touchOrigin.x;
-				float y = touchEnd.y - touchOrigin.y;
-
-				touchOrigin.x = -1;
-
-				if(Mathf.Abs(x) > Mathf.Abs(y))
+				//do movement stuff if input is on left side of screen
+				movementTouch = Input.touches[0];
+				if(movementTouch.phase == TouchPhase.Began)
 				{
-					directionalInput.x = x > 0 ? 1 : -1;
+					touchOrigin = movementTouch.position;
 				}
-				else
+				else if(movementTouch.phase == TouchPhase.Moved)
 				{
-					directionalInput.y = y > 0 ? 1 : -1;
-					Jump();
+					accumulatedDeltaX += movementTouch.deltaPosition.x;
+					accumulatedDeltaY += movementTouch.deltaPosition.y;
+
+					//x direction
+					if(accumulatedDeltaX > deadzoneX)
+					{
+						directionalInput.x = 1;
+					}
+					else if(accumulatedDeltaX < -deadzoneX)
+					{
+						directionalInput.x = -1;
+					}
+					//y direction
+					if(accumulatedDeltaY > deadzoneY)
+					{
+						Jump();
+					}
+					else if(accumulatedDeltaY < -deadzoneY)
+					{
+						directionalInput.y = -1;
+					}
+				}
+				else if(movementTouch.phase == TouchPhase.Ended)
+				{
+					accumulatedDeltaX = 0;
+					accumulatedDeltaY = 0;
+					directionalInput = Vector2.zero;
 				}
 			}
 		}
-		else
-		{
-			touchOrigin = -Vector2.one;
-			directionalInput = Vector2.zero;
-		}
+
 		UpdateAnimations();
 		player.SetDirectionalInput(directionalInput);
 		
@@ -127,22 +145,18 @@ public class PlayerInput : MonoBehaviour
 	}
 	void Jump()
 	{
-		if(directionalInput.y > 0)
+		if(controller.collisions.below)
 		{
-
-			if(controller.collisions.below)
+			player.setVelocity(player.getVelocity().x, player.jumpVelocity);
+			doubleJump = true;
+		}
+		else
+		{
+			if(doubleJump)
 			{
+				SetFacingDirection();
 				player.setVelocity(player.getVelocity().x, player.jumpVelocity);
-				doubleJump = true;
-			}
-			else
-			{
-				if(doubleJump)
-				{
-					SetFacingDirection();
-					player.setVelocity(player.getVelocity().x, player.jumpVelocity);
-					doubleJump = false;
-				}
+				doubleJump = false;
 			}
 		}
 	}

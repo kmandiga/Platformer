@@ -71,15 +71,11 @@ public class Player : MonoBehaviour, IHittable {
 			//calculate x velocity
 			if(directionalInput.x != 0)
 			{	
-				velocity.x= directionalInput.x * maxSpeedGrounded;
-				stopMoving = false;
+				velocity.x = directionalInput.x * maxSpeedGrounded;
 			}
 			else
 			{
-				if(controller.collisions.below)
-				{
-				StopMovement();
-				}
+				velocity.x = 0;
 			}
 			if(controller.collisions.below)
 			{
@@ -116,23 +112,6 @@ public class Player : MonoBehaviour, IHittable {
 			Invoke("resetInKnockbackBool", hitstun);
 		}
 
-	}
-	void StopMovement()
-	{
-		if(!stopMoving)
-		{
-			frames++;
-			//number of frames should depend on player weight eventually
-			if(frames == 20)
-			{
-				stopMoving = true;
-				frames = 0;
-			}
-		}
-		else
-		{
-			velocity.x = 0;
-		}
 	}
 	void resetInKnockbackBool()
 	{
